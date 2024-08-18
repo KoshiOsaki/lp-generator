@@ -13,25 +13,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Image {
+model GenerateImage {
   id                 Int              @id @default(autoincrement())
-  model              String
-  prompt             String?
-  title              String
-  storageUrl         String
-  lps                Lp[] 
+  model              String           @db.VarChar(255)
+  prompt             String?          @db.Text
+  title              String           @db.VarChar(255)
+  storageUrl         String           @db.VarChar(255)  
+  lps                Lp[]
+  createdAt DateTime @default(now())
+}
+
+model PreparedImage {
+  id                 Int              @id @default(autoincrement())
+  title              String           @db.VarChar(255)
+  storageUrl         String           @db.VarChar(255)
+  lps                Lp[]
   createdAt DateTime @default(now())
 }
 
 model Lp {
   id                 Int              @id @default(autoincrement())
   name               String           @unique
-  url                String?
-  model              String
-  content            String?          // HTMLやCSSを格納、分割必要なら別テーブルへ
-  prompt             String?
+  url                String?          @db.VarChar(255)
+  model              String           @db.VarChar(255)
+  content            String?          @db.Text    // HTMLやCSSを格納、分割必要なら別テーブルへ
+  prompt             String?          @db.Text
   isAdopted          Boolean
-  images             Image[]
+  generateImage      GenerateImage[]
+  preparedImage      PreparedImage[]
   items              Item[]
   createdAt DateTime @default(now())
 }
@@ -40,8 +49,8 @@ model Item {
   id          Int      @id @default(autoincrement())
   lpId        Int
   name        String   @unique
-  imageUrl    String
-  description String?
+  imageUrl    String   @db.VarChar(255)
+  description String?  @db.Text
   Lp          Lp?      @relation(fields: [lpId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -49,16 +58,16 @@ model Item {
 
 model ImageDefault {
   id                   Int              @id @default(autoincrement())
-  model                String
-  prompt               String?
+  model                String           @db.VarChar(255)
+  prompt               String?          @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 model LpDefault {
   id                   Int              @id @default(autoincrement())
-  model                String
-  prompt               String?
+  model                String           @db.VarChar(255)
+  prompt               String?          @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

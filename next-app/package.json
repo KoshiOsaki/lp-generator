@@ -7,12 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prisma:generate": "dotenv -e .env.local -- npx prisma generate",
+    "prisma:generate": "dotenv -e .env.local -- prisma generate",
     "prisma:migrate": "dotenv -e .env.local -- prisma migrate dev",
-    "prisma:seed": "dotenv -e .env.local -- npx prisma db seed --preview-feature"
+    "prisma:seed": "dotenv -e .env.local -- prisma db seed"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.13.1",
@@ -41,6 +41,7 @@
     "eslint-plugin-import": "^2.29.1",
     "prettier": "^3.2.5",
     "prisma": "^5.18.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   },
   "volta": {
