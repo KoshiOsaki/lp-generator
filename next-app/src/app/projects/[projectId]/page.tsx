@@ -9,8 +9,13 @@ import {
   AppBar,
   Box,
   Button,
+  Card,
+  CardContent,
+  CardMedia,
   Container,
   Grid,
+  ImageList,
+  ImageListItem,
   Paper,
   Tab,
   Tabs,
@@ -30,6 +35,8 @@ const LPEditPreviewPage = () => {
   const [prompt, setPrompt] = useState('');
   const [htmlContent, setHtmlContent] = useState('');
   const shadowRootRef = useRef(null);
+  const [generatedImages, setGeneratedImages] = useState(mockImageList);
+  const [newPrompt, setNewPrompt] = useState('');
 
   useEffect(() => {
     setHtmlContent(MockHTMLString);
@@ -114,6 +121,21 @@ const LPEditPreviewPage = () => {
   const handlePublish = () => {
     // Here you would typically call an API to publish the LP
     console.log('Publishing LP');
+  };
+
+  const handleImageSelect = (image) => {
+    setSelectedImage(image);
+  };
+
+  const handleGenerateImage = () => {
+    // This is where you would typically call an API to generate a new image
+    const newImage = {
+      id: generatedImages.length + 1,
+      url: 'https://images.unsplash.com/photo-1516594798947-e65505dbb29d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+      prompt: newPrompt,
+    };
+    setGeneratedImages([...generatedImages, newImage]);
+    setNewPrompt('');
   };
 
   const renderEditableContent = () => {
@@ -205,10 +227,53 @@ const LPEditPreviewPage = () => {
                 )}
                 {rightTab === 'image' && (
                   <>
-                    <Typography variant="body1" sx={{ mt: 2, mb: 2 }}>
-                      Image Generation
+                    {selectedImage && (
+                      <Card sx={{ mb: 2 }}>
+                        <CardMedia component="img" height="200" image={selectedImage.url} alt="Selected image" />
+                        <CardContent>
+                          <Typography variant="body2" color="text.secondary">
+                            Prompt: {selectedImage.prompt}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    )}
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                      Generate New Image
                     </Typography>
-                    {/* Image generation UI goes here */}
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={4}
+                      variant="outlined"
+                      label="Image Prompt"
+                      value={newPrompt}
+                      onChange={(e) => setNewPrompt(e.target.value)}
+                      margin="normal"
+                    />
+                    <Button variant="contained" color="primary" onClick={handleGenerateImage} sx={{ mb: 2 }}>
+                      Generate
+                    </Button>
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                      Generated Images
+                    </Typography>
+                    <ImageList cols={3} rowHeight={164}>
+                      {generatedImages.map((item) => (
+                        <ImageListItem
+                          key={item.id}
+                          sx={{
+                            cursor: 'pointer',
+                            border: selectedImage?.id === item.id ? '2px solid #1976d2' : 'none',
+                            borderRadius: '4px',
+                          }}
+                          onClick={() => handleImageSelect(item)}
+                        >
+                          <img src={item.url} alt={`Generated image ${item.id}`} loading="lazy" />
+                        </ImageListItem>
+                      ))}
+                    </ImageList>
+                    <Button variant="outlined" color="primary" sx={{ mt: 2 }}>
+                      Upload Image
+                    </Button>
                   </>
                 )}
               </Box>
@@ -225,6 +290,24 @@ const LPEditPreviewPage = () => {
   );
 };
 export default LPEditPreviewPage;
+
+const mockImageList = [
+  {
+    id: 1,
+    url: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    prompt: 'A bottle of red wine with a glass on a wooden table',
+  },
+  {
+    id: 2,
+    url: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    prompt: 'Wine cellar with wooden barrels',
+  },
+  {
+    id: 3,
+    url: 'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80',
+    prompt: 'Glass of white wine in a vineyard',
+  },
+];
 
 const MockHTMLString = `
 <!DOCTYPE html>
