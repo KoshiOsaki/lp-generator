@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ImageLpHistory {
+  id         Int      @id @default(autoincrement())
+  imageId    Int
+  lpId       Int
+  Image      Image?    @relation(fields: [imageId], references: [id])
+  Lp         Lp? @relation(fields: [lpId], references: [id])
+}
+
+model Image {
+  id                Int              @id @default(autoincrement())
+  model             String
+  prompt            String?
+  title             String
+  storageUrl        String
+  imageLpHistories  ImageLpHistory[]
+  createdAt DateTime @default(now())
+}
+
+model Lp {
+  id                Int              @id @default(autoincrement())
+  name              String
+  url               String?
+  model             String
+  content           String?          // HTMLやCSSを格納、分割必要なら別テーブルへ
+  prompt            String?
+  isAdopted         Boolean
+  imageLpHistories  ImageLpHistory[]
+  items             Item[]
+  createdAt DateTime @default(now())
+}
+
+model Item {
+  id          Int      @id @default(autoincrement())
+  lpId        Int
+  name        String
+  imageUrl    String
+  description String?
+  Lp          Lp       @relation(fields: [lpId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ImageDefault {
+  id                Int              @id @default(autoincrement())
+  model             String
+  prompt            String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LpDefault {
+  id                Int              @id @default(autoincrement())
+  model             String
+  prompt            String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
