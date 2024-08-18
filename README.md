@@ -4,19 +4,25 @@ LP 自動生成サービスです
 
 ## 開発環境のセットアップ
 
-1. プロジェクトディレクトリに移動:
+1. next-app ディレクトリに移動:
 
    ```
-   cd lp-generator
+   cd next-app
    ```
 
-2. 依存関係をインストール:
+2. .env.template をコピーして.env ファイルを作成:
+
+   ```
+   cp .env.template .env.local
+   ```
+
+3. 依存関係をインストール:
 
    ```
    npm install
    ```
 
-3. 開発サーバーを起動:
+4. 開発サーバーを起動:
    ```
    npm run dev
    ```
