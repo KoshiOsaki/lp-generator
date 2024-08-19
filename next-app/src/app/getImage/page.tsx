@@ -1,5 +1,5 @@
 'use client';
-// Cloud Storageの
+// Cloud Storageの画像を取得するサンプルコード
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 

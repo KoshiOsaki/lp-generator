@@ -1,5 +1,6 @@
+// Reference: https://github.com/googleapis/nodejs-storage/blob/main/samples/generateV4ReadSignedUrl.js
 import { NextResponse } from 'next/server';
-import { Storage } from '@google-cloud/storage'
+import { getStorageConfig } from '../../../gcp/storageConfig'
 export async function GET(req: Request): Promise<Response> {
 
   const { searchParams } = new URL(req.url);
@@ -9,11 +10,7 @@ export async function GET(req: Request): Promise<Response> {
     return NextResponse.json({ error: 'ファイル名が間違っています' }, { status: 400 });
   }
 
-  const storage = new Storage({
-    projectId: process.env.PROJECT_ID,
-    keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-  })
-
+  const storage = getStorageConfig()
   const bucketName = 'lp-items' // 一旦ハードコーディング
 
   const bucket = storage.bucket(bucketName)
@@ -23,7 +20,7 @@ export async function GET(req: Request): Promise<Response> {
   const options = {
     version: 'v4' as const,
     action: "read" as const,
-    expires: Date.now() + 10 * 60 * 1000, // 10分間有効
+    expires: Date.now() + 15 * 60 * 1000, // 15分間有効
   }
 
   const [url] = await file.getSignedUrl(options)
