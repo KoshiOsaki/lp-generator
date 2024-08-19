@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model GenerateImage {
+  id                 Int              @id @default(autoincrement())
+  model              String           @db.VarChar(255)
+  prompt             String?          @db.Text
+  title              String           @db.VarChar(255)
+  storageUrl         String           @db.VarChar(255)  
+  lps                Lp[]
+  createdAt DateTime @default(now())
+}
+
+model PreparedImage {
+  id                 Int              @id @default(autoincrement())
+  title              String           @db.VarChar(255)
+  storageUrl         String           @db.VarChar(255)
+  lps                Lp[]
+  createdAt DateTime @default(now())
+}
+
+model Lp {
+  id                 Int              @id @default(autoincrement())
+  name               String           @unique
+  url                String?          @db.VarChar(255)
+  model              String           @db.VarChar(255)
+  content            String?          @db.Text    // HTMLやCSSを格納、分割必要なら別テーブルへ
+  prompt             String?          @db.Text
+  isAdopted          Boolean
+  generateImage      GenerateImage[]
+  preparedImage      PreparedImage[]
+  items              Item[]
+  createdAt DateTime @default(now())
+}
+
+model Item {
+  id          Int      @id @default(autoincrement())
+  lpId        Int
+  name        String   @unique
+  imageUrl    String   @db.VarChar(255)
+  description String?  @db.Text
+  Lp          Lp?      @relation(fields: [lpId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ImageDefault {
+  id                   Int              @id @default(autoincrement())
+  model                String           @db.VarChar(255)
+  prompt               String?          @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LpDefault {
+  id                   Int              @id @default(autoincrement())
+  model                String           @db.VarChar(255)
+  prompt               String?          @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// TODO: 使用するモデルがある程度固まったらmodelをenum型にする
